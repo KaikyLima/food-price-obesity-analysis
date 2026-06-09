@@ -1,0 +1,306 @@
+\documentclass[kdmile,a4paper]{kdmile}
+
+\usepackage{graphicx,url}
+\usepackage[T1]{fontenc}
+\usepackage{booktabs}
+\usepackage{multirow}
+
+% Teoremas e definições
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newdef{definition}[theorem]{Definition}
+\newdef{remark}[theorem]{Remark}
+
+% ============================================================
+% CABEÇALHO: ajuste nomes conforme número de autores
+% 2-3 autores: iniciais; >3 autores: "A. Sobrenome et al."
+% ============================================================
+\markboth{E. Barreto and K. S. Lima}
+         {Price Disparity between Healthy and Processed Foods as a Predictor of Obesity Rates in the USA}
+
+% ============================================================
+% TÍTULO
+% ============================================================
+\title{Price Disparity between Healthy and Processed Foods as a\\
+       Predictor of Obesity Rates in the USA:\\
+       An Analysis with USDA and BRFSS Public Data}
+
+% ============================================================
+% AUTORES E AFILIAÇÕES
+% ============================================================
+\author{Evandro Barreto\inst{1} \and Kaiky de Souza Lima\inst{1}}
+
+\institute{
+  % Substitua pela instituição real de vocês
+  Universidade Tecnológica Federal do Paran\'{a}, Brazil \\
+  \email{\{evandrobarreto, kaiky\}@alunos.utfpr.edu.br}
+}
+
+% ============================================================
+% ABSTRACT (obrigatório em inglês, 100–300 palavras, 1 parágrafo)
+% ============================================================
+\begin{abstract}
+Obesity is one of the most pressing global public health challenges, with socioeconomic
+factors playing a decisive role in its prevalence. This study investigates whether the
+price disparity between healthy and ultra-processed foods is a statistically significant
+predictor of obesity rates across American states. We integrate two public datasets: the
+Behavioral Risk Factor Surveillance System (BRFSS), provided by the CDC, which contains
+time-series indicators of obesity, fruit and vegetable consumption, and physical activity
+among American adults; and the Food-at-Home Monthly Area Prices dataset, provided by the
+USDA, which monitors regional monthly prices of household food items disaggregated by
+geographic area. We conduct an exploratory and correlational analysis to investigate
+whether variations in healthy food prices and income level are statistically associated
+with obesity rates across geographic regions. Subsequently, a regression model is applied
+to quantify the magnitude of this impact. Additionally, income level is examined as a
+potential moderating factor in the relationship between food prices and obesity risk.
+We hypothesize that sustained increases in fruit and vegetable prices are positively
+associated with higher obesity rates, and that lower-income populations are
+disproportionately affected. This work is aligned with the topics of Data Mining
+Applications, Machine Learning Applications, Time-Series Analysis, and Supervised
+Learning.
+\end{abstract}
+
+% ============================================================
+% CCS CONCEPTS — gere em: https://dl.acm.org/ccs/ccs.cfm
+% ============================================================
+\begin{CCSXML}
+<ccs2012>
+  <concept>
+    <concept_id>10010147.10010257</concept_id>
+    <concept_desc>Computing methodologies~Machine learning</concept_desc>
+    <concept_significance>500</concept_significance>
+  </concept>
+  <concept>
+    <concept_id>10010147.10010257.10010293</concept_id>
+    <concept_desc>Computing methodologies~Supervised learning</concept_desc>
+    <concept_significance>300</concept_significance>
+  </concept>
+</ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Computing methodologies~Machine learning}
+\ccsdesc[300]{Computing methodologies~Supervised learning}
+
+\keywords{obesity, food prices, machine learning, classification, supervised learning,
+          BRFSS, USDA, data mining}
+
+% ============================================================
+% FINANCIAMENTO (se houver)
+% ============================================================
+% \begin{bottomstuff}
+% This work was partially funded by CNPq grant number XYZ.
+% \end{bottomstuff}
+
+\begin{document}
+\begin{bottomstuff}
+\end{bottomstuff}
+\maketitle
+
+% ============================================================
+% 1. INTRODUÇÃO
+% ============================================================
+\section{Introduction}
+
+A obesidade constitui um dos maiores desafios contemporâneos de saúde pública, sendo
+substancialmente agravada por variáveis macroeconômicas.
+
+Embora a relação entre custo alimentar e obesidade seja intuitivamente sugerida na
+literatura, a principal lacuna metodológica reside na integração sistemática de bases de
+dados epidemiológicas e econômicas díspares para atestar esse fenômeno de forma
+quantitativa e replicável. Este artigo aborda essa lacuna por meio de um pipeline analítico
+preditivo que combina dados públicos do USDA e do CDC/BRFSS.
+
+As seguintes perguntas de pesquisa orientam o estudo:
+
+\begin{itemize}
+  \item \textbf{P1:} Existe relação mensurável e estatisticamente significativa entre o
+  custo de alimentos saudáveis (preço de frutas e vegetais) e a faixa de renda da
+  população com os índices de obesidade nos estados norte-americanos?
+\end{itemize}
+
+As hipóteses testadas são:
+\begin{itemize}
+  \item \textbf{H1:} A elevação sustentada nos preços médios de frutas e vegetais está
+  positivamente associada ao aumento das taxas de obesidade.
+  \item \textbf{H2:} Categorias específicas de grupos de alimentos apresentam variações de
+  preço com impacto diferenciado nos índices de obesidade.
+  \item \textbf{H3:} Populações com menor faixa de renda apresentam maiores índices de
+  obesidade, sendo a renda um fator moderador na relação entre custo de alimentos
+  saudáveis e risco de obesidade.
+\end{itemize}
+
+% ============================================================
+% 2. TRABALHOS RELACIONADOS
+% ============================================================
+\section{Related Work}
+\label{sec:related}
+
+% TODO: expandir com referências reais
+Em desenvolvimento \cite{TODO} 
+
+
+% ============================================================
+% 3. DADOS
+% ============================================================
+\section{Data}
+\label{sec:data}
+
+\subsection{Dataset 1: Nutrition, Physical Activity and Obesity (CDC/BRFSS)}
+
+O Behavioral Risk Factor Surveillance System (BRFSS) é um sistema de vigilância em saúde
+conduzido pelo CDC (Centers for Disease Control and Prevention). O dataset utilizado
+contém séries temporais e recortes geográficos com indicadores de obesidade, consumo de
+frutas e vegetais e atividade física de adultos americanos.
+
+As principais variáveis de interesse incluem: taxa de obesidade por estado e ano,
+estratificada por faixa de renda, nível educacional, sexo e etnia.
+
+\subsection{Dataset 2: Food-at-Home Monthly Area Prices (USDA)}
+
+O dataset do USDA monitora mensalmente os preços regionais de gêneros alimentícios
+domiciliares, desagregado por área geográfica. Permite análise temporal das oscilações de
+custo e cruzamento geoespacial com os dados de saúde do BRFSS.
+
+As principais variáveis de interesse incluem: preço médio mensal por categoria de alimento
+(frutas, vegetais, proteínas, processados) por região geográfica.
+
+\subsection{Integração dos Dados}
+
+A integração entre os dois datasets é realizada por meio de chave composta
+\texttt{(estado, ano)}, permitindo o alinhamento temporal e geoespacial entre as
+variáveis de preço e os indicadores de saúde. A Tabela~\ref{tab:datasets} sumariza as
+características principais dos datasets.
+
+\begin{table}[h!]
+\caption{Características dos datasets utilizados}
+\label{tab:datasets}
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{Atributo}  & \textbf{BRFSS (CDC)}          & \textbf{FAHMAP (USDA)} \\
+\midrule
+Granularidade      & Estado / ano                  & Região / mês           \\
+Período            & 2012--2018                    & 2012--2018             \\
+Nº de registros    & 110.880                       & 1.020.600              \\
+Variável-alvo      & Taxa de obesidade (\%)        & --                     \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================
+% 4. METODOLOGIA
+% ============================================================
+\section{Methodology}
+\label{sec:method}
+
+O pipeline analítico é composto por três etapas: pré-processamento e integração dos
+dados, análise exploratória e correlacional, e — como trabalho futuro — modelagem
+preditiva supervisionada.
+
+\subsection{Pré-processamento e Integração}
+
+Os dados do BRFSS foram filtrados para registros com indicador de obesidade válido,
+estratificados por faixa de renda e agregados por estado e ano. Os dados do USDA foram
+agregados de granularidade mensal para médias anuais por região geográfica. A integração
+entre os dois datasets foi realizada por meio de chave composta \texttt{(região, ano)},
+resultando em um dataset analítico unificado com variáveis de preço e indicadores de
+saúde alinhados temporalmente. Todo o pipeline foi implementado em Python utilizando
+\texttt{pandas} e \texttt{DuckDB} para consultas SQL sobre os dados brutos.
+
+\subsection{Análise Exploratória e Correlacional}
+
+Foram construídas duas variáveis derivadas principais: \textit{Price\_Healthy}, o preço
+médio de alimentos saudáveis (frutas e vegetais), e \textit{Price\_Ratio}, a razão entre
+o preço de alimentos saudáveis e ultraprocessados. A relação entre essas variáveis e as
+taxas de obesidade foi investigada por meio do coeficiente de correlação de Pearson,
+calculado separadamente para cada região geográfica (Nordeste, Centro-Oeste, Sul e
+Oeste). A influência da faixa de renda foi avaliada por meio de correlação entre uma
+codificação ordinal das faixas de renda e as taxas de obesidade, além de análise
+temporal estratificada por grupo de renda.
+
+\subsection{Plano de Modelagem Preditiva (Trabalho Futuro)}
+
+Em desenvolvimento
+
+
+% ============================================================
+% 5. PLANO DE AVALIAÇÃO EXPERIMENTAL
+% ============================================================
+\section{Experimental Evaluation Plan}
+\label{sec:experiments}
+
+% TODO: substituir pelo texto de resultados quando disponíveis
+
+\subsection{Configuração Experimental}
+
+Em desenvolvimento
+
+\subsection{Métricas de Avaliação}
+
+Em desenvolvimento
+
+\subsection{Hipóteses e Experimentos Planejados}
+
+Em desenvolvimento
+
+\subsection{Resultados Preliminares}
+
+% TODO: inserir resultados da análise exploratória aqui
+Em desenvolvimento
+
+
+% ============================================================
+% 6. RESULTADOS E DISCUSSÃO
+% ============================================================
+\section{Results and Discussion}
+\label{sec:results}
+
+Em desenvolvimento.
+
+% ============================================================
+% 7. LIMITAÇÕES E AMEAÇAS À VALIDADE
+% ============================================================
+\section{Limitations and Threats to Validity}
+\label{sec:limitations}
+
+Em desenvolvimento.
+
+% ============================================================
+% 8. CONCLUSÃO
+% ============================================================
+\section{Conclusion}
+\label{sec:conclusion}
+
+% TODO: preencher após os experimentos
+Em desenvolvimento
+
+% ============================================================
+% AGRADECIMENTOS (opcional)
+% ============================================================
+% \begin{ack}
+% Os autores agradecem...
+% \end{ack}
+
+\begin{received}
+\end{received}
+
+% ============================================================
+% REFERÊNCIAS
+% ============================================================
+\bibliographystyle{kdmile}
+\bibliography{kdmileb}
+
+% Referências manuais temporárias (remover ao usar .bib):
+% \begin{thebibliography}{9}
+%
+% \bibitem{TODO}
+% Autor, A. A. e Autor, B. B.
+% Título do artigo.
+% In: \textit{Proceedings of ...}, pp. XX--XX, Ano.
+%
+% \end{thebibliography}
+
+\end{document}
