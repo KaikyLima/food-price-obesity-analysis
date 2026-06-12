@@ -14,7 +14,7 @@ ORDEM_RENDA = [
     "Less than $15,000", "$15,000 - $24,999", "$25,000 - $34,999",
     "$35,000 - $49,999", "$50,000 - $74,999", "$75,000 or greater",
 ]
-LABELS_RENDA = ["< $15k", "$15k–$25k", "$25k–$35k", "$35k–$50k", "$50k–$75k", "> $75k"]
+LABELS_RENDA = ["< \\$15k", "\\$15k–\\$25k", "\\$25k–\\$35k", "\\$35k–\\$50k", "\\$50k–\\$75k", "> \\$75k"]
 CORES_RENDA  = {
     "Less than $15,000"  : "#e63946",
     "$15,000 - $24,999"  : "#e07b54",
@@ -118,6 +118,83 @@ def grafico_evolucao_obesidade_renda(df_analitico_renda: pd.DataFrame) -> None:
     ax.legend(title="Faixa de Renda", bbox_to_anchor=(1.01, 1), loc="upper left")
     plt.tight_layout()
     path = "data/graficos/fig4_evolucao_obesidade_renda.png"
+    plt.savefig(path, dpi=150, bbox_inches="tight")
+    plt.show()
+    print(f"Salvo: {path}")
+
+
+def grafico_projecao_obesidade_renda(media_por_grupo_ano: pd.DataFrame, df_previsoes: pd.DataFrame) -> None:
+    fig, ax = plt.subplots(figsize=(12, 6))
+    ultimo_ano = media_por_grupo_ano["Year"].max()
+
+    for faixa, cor in CORES_RENDA.items():
+        hist = media_por_grupo_ano[media_por_grupo_ano["Income_Group"] == faixa]
+        ax.plot(hist["Year"], hist["Obesity_Rate"], marker="o", color=cor, linewidth=2,
+                label=LABELS_RENDA_MAP[faixa])
+
+        prev = df_previsoes[df_previsoes["Income_Group"] == faixa]
+        if prev.empty:
+            continue
+
+        ultimo_hist = hist.iloc[[-1]][["Year", "Obesity_Rate"]].rename(columns={"Obesity_Rate": "Obesity_Rate_previsto"})
+        linha_prev = pd.concat([ultimo_hist, prev[["Year", "Obesity_Rate_previsto"]]])
+        ax.plot(linha_prev["Year"], linha_prev["Obesity_Rate_previsto"], "--", color=cor, linewidth=2, alpha=0.8)
+
+        ax.fill_between(prev["Year"], prev["limite_inferior"], prev["limite_superior"], color=cor, alpha=0.15)
+
+    ax.axvline(ultimo_ano, color="gray", linestyle=":", linewidth=1)
+    ax.set_title("Obesidade por Faixa de Renda — Histórico e Projeção com Intervalo de Predição (H3)")
+    ax.set_ylabel("Taxa de Obesidade (%)")
+    ax.set_xlabel("Ano")
+    ax.legend(title="Faixa de Renda", bbox_to_anchor=(1.01, 1), loc="upper left")
+    plt.tight_layout()
+    path = "data/graficos/fig5_projecao_obesidade_renda.png"
+    plt.savefig(path, dpi=150, bbox_inches="tight")
+    plt.show()
+    print(f"Salvo: {path}")
+
+
+def grafico_predito_vs_real(y_test: pd.Series, predicoes: dict, titulo: str, nome_arquivo: str) -> None:
+    from sklearn.metrics import r2_score
+
+    nomes = list(predicoes.keys())
+    fig, axes = plt.subplots(1, len(nomes), figsize=(5 * len(nomes), 5), sharex=True, sharey=True)
+    if len(nomes) == 1:
+        axes = [axes]
+
+    lim_min = min(y_test.min(), min(p.min() for p in predicoes.values())) - 1
+    lim_max = max(y_test.max(), max(p.max() for p in predicoes.values())) + 1
+
+    for ax, nome in zip(axes, nomes):
+        y_pred = predicoes[nome]
+        ax.scatter(y_test, y_pred, alpha=0.6, edgecolors="white", s=50, color="#457b9d")
+        ax.plot([lim_min, lim_max], [lim_min, lim_max], "--", color="gray", linewidth=1.5)
+        r2 = r2_score(y_test, y_pred)
+        ax.set_title(f"{nome}  (R² = {r2:.3f})")
+        ax.set_xlabel("Obesity_Rate real (%)")
+        ax.set_ylabel("Obesity_Rate previsto (%)")
+        ax.set_xlim(lim_min, lim_max)
+        ax.set_ylim(lim_min, lim_max)
+
+    plt.suptitle(titulo, fontsize=14, y=1.03)
+    plt.tight_layout()
+    path = f"data/graficos/{nome_arquivo}"
+    plt.savefig(path, dpi=150, bbox_inches="tight")
+    plt.show()
+    print(f"Salvo: {path}")
+
+
+def grafico_coeficientes_regressao(coefs: pd.Series, titulo: str, nome_arquivo: str) -> None:
+    coefs_ordenado = coefs.iloc[::-1]
+    cores = ["#2a9d8f" if v >= 0 else "#e63946" for v in coefs_ordenado.values]
+
+    fig, ax = plt.subplots(figsize=(8, max(3, 0.45 * len(coefs_ordenado))))
+    ax.barh(coefs_ordenado.index, coefs_ordenado.values, color=cores)
+    ax.axvline(0, color="black", linewidth=0.8)
+    ax.set_xlabel("Coeficiente padronizado")
+    ax.set_title(titulo)
+    plt.tight_layout()
+    path = f"data/graficos/{nome_arquivo}"
     plt.savefig(path, dpi=150, bbox_inches="tight")
     plt.show()
     print(f"Salvo: {path}")
