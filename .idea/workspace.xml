@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c9007e73-c31f-424a-ac5a-3adc3b81adde" name="Changes" comment="Análise preço alimento X obesidade">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/note.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/note.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/modelos.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modelos.py" afterDir="false" />
-    </list>
+    <list default="true" id="c9007e73-c31f-424a-ac5a-3adc3b81adde" name="Changes" comment="Análise preço alimento X obesidade" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -79,11 +75,24 @@
       <workItem from="1781473656994" duration="6168000" />
       <workItem from="1781484258919" duration="304000" />
       <workItem from="1782431341568" duration="2908000" />
-      <workItem from="1782434296422" duration="695000" />
+      <workItem from="1782434296422" duration="1313000" />
     </task>
+    <task id="LOCAL-00001" summary="Análise preço alimento X obesidade">
+      <option name="closed" value="true" />
+      <created>1782435010585</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1782435010585</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Análise preço alimento X obesidade" />
+    <option name="LAST_COMMIT_MESSAGE" value="Análise preço alimento X obesidade" />
   </component>
 </project>
