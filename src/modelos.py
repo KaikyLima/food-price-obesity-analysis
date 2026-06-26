@@ -7,6 +7,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.dummy import DummyRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from xgboost import XGBRegressor
 
 
 def comparar_modelos_regressao(X: pd.DataFrame, y: pd.Series, test_size: float = 0.25, random_state: int = 42):
@@ -22,6 +23,7 @@ def comparar_modelos_regressao(X: pd.DataFrame, y: pd.Series, test_size: float =
         "Baseline (média)": DummyRegressor(strategy="mean"),
         "Regressão Linear":  LinearRegression(),
         "Random Forest":     RandomForestRegressor(n_estimators=300, max_depth=5, random_state=random_state),
+        "XGBoost": XGBRegressor(n_estimators=300, max_depth=5, learning_rate=0.1, random_state=random_state)
     }
 
     resultados, treinados = [], {}
@@ -53,5 +55,19 @@ def comparar_modelos_regressao(X: pd.DataFrame, y: pd.Series, test_size: float =
 
 
 def extrair_coeficientes(modelo, feature_names) -> pd.Series:
-    coefs = pd.Series(modelo.coef_, index=feature_names)
-    return coefs.reindex(coefs.abs().sort_values(ascending=False).index)
+    """Extrai coeficientes (Regressão Linear) ou importâncias de features (Modelos de Árvore)."""
+    # 1. Verifica se é um modelo linear (Regressão Linear)
+    if hasattr(modelo, 'coef_'):
+        importancias = pd.Series(modelo.coef_, index=feature_names)
+        # Ordena pelo valor absoluto para ver o impacto real, seja positivo ou negativo
+        return importancias.reindex(importancias.abs().sort_values(ascending=False).index)
+
+    # 2. Verifica se é um modelo baseado em árvores (Random Forest, XGBoost)
+    elif hasattr(modelo, 'feature_importances_'):
+        importancias = pd.Series(modelo.feature_importances_, index=feature_names)
+        # Importâncias de árvores são sempre positivas, basta ordenar decrescente
+        return importancias.sort_values(ascending=False)
+
+    # 3. Tratamento de exceção para modelos como DummyRegressor que não possuem os atributos
+    else:
+        return pd.Series(0, index=feature_names)
